@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026：觉醒模拟器 | Neon Fluidity</title>
+    <title>Neon Protocol | 觉醒矩阵</title>
     <style>
         :root {
-            --bg-dark: #050b1a;
+            --bg-dark: #0a0a0c;
+            --neon-green: #39ff14;
             --neon-cyan: #00f2ff;
-            --neon-magenta: #ff00ff;
+            --neon-magenta: #ff003c;
             --text-light: #e0e6ed;
         }
 
         body {
             background-color: var(--bg-dark);
+            /* 像素风网格背景 */
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 25px 25px;
             color: var(--text-light);
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Courier New', Courier, monospace; /* 替换为代码打字机字体增强像素感 */
             margin: 0;
             display: flex;
             justify-content: center;
@@ -24,94 +30,116 @@
             overflow: hidden;
         }
 
-        .neon-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.15), transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.15), transparent 40%);
-            animation: flow 15s infinite alternate ease-in-out;
-        }
-
-        @keyframes flow {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(45deg) transform: scale(1.1); }
+        /* 屏幕扫描线滤镜 */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px; z-index: 10; pointer-events: none;
         }
 
         #container {
-            width: 85%; max-width: 500px;
-            background: rgba(10, 20, 40, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 40px; border-radius: 24px;
-            border: 1px solid rgba(0, 242, 255, 0.3);
+            width: 85%; max-width: 550px;
+            background: rgba(10, 15, 20, 0.85);
+            border: 2px solid var(--neon-cyan);
+            padding: 40px; border-radius: 8px; /* 取消大圆角，更符合像素复古感 */
             text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.4);
+            position: relative;
+            z-index: 20;
         }
 
-        h1 { font-weight: 200; letter-spacing: 4px; color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
-        .question-text { font-size: 1.1rem; line-height: 1.6; margin: 30px 0; color: #b0b8c4; }
+        h1 { 
+            font-weight: bold; font-size: 2rem; letter-spacing: 2px; 
+            color: var(--text-light); text-shadow: 2px 2px 0px var(--neon-magenta), -2px -2px 0px var(--neon-cyan); 
+            margin-bottom: 5px;
+        }
+        .subtitle { color: var(--neon-cyan); font-size: 0.9rem; margin-bottom: 30px; letter-spacing: 5px; text-transform: uppercase;}
+        
+        .question-text { font-size: 1.1rem; line-height: 1.6; margin: 30px 0; color: #b0b8c4; font-weight: bold; }
 
         .option-btn {
-            display: block; width: 100%; background: rgba(255, 255, 255, 0.05); color: var(--text-light);
-            border: 1px solid rgba(0, 242, 255, 0.4); padding: 18px; margin-bottom: 15px; border-radius: 12px;
-            cursor: pointer; transition: 0.3s; font-size: 1rem;
+            display: block; width: 100%; background: transparent; color: var(--neon-cyan);
+            border: 1px dashed var(--neon-cyan); padding: 15px; margin-bottom: 15px; 
+            cursor: pointer; transition: 0.2s; font-size: 1rem; font-family: inherit;
         }
-
-        .option-btn:hover {
-            background: rgba(0, 242, 255, 0.2);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
-        }
+        .option-btn:hover { background: var(--neon-cyan); color: var(--bg-dark); font-weight: bold; box-shadow: 0 0 10px var(--neon-cyan); }
 
         #result-area { display: none; }
-        .persona-title { font-size: 2.2rem; color: var(--neon-magenta); margin: 20px 0; text-shadow: 0 0 15px rgba(255, 0, 255, 0.6); }
-        .persona-desc { font-size: 0.95rem; line-height: 1.8; color: #a0aec0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border-left: 3px solid var(--neon-magenta); text-align: left; }
+        
+        /* 头像框 */
+        .avatar-container {
+            width: 120px; height: 120px; margin: 0 auto 20px auto;
+            border: 3px solid var(--neon-green);
+            background: #000;
+            box-shadow: 0 0 15px var(--neon-green);
+            overflow: hidden;
+            position: relative;
+        }
+        .avatar-container img { width: 100%; height: 100%; image-rendering: pixelated; }
 
-        .progress-bar { width: 100%; height: 2px; background: rgba(255,255,255,0.1); margin-bottom: 30px; }
+        .persona-title { font-size: 1.8rem; color: var(--neon-green); margin: 10px 0; font-weight: bold; text-shadow: 0 0 8px var(--neon-green); }
+        .persona-tags { color: var(--neon-magenta); font-size: 0.9rem; margin-bottom: 20px; }
+        .persona-desc { font-size: 0.95rem; line-height: 1.6; color: #c8d4e3; background: rgba(0,0,0,0.5); padding: 15px; border: 1px solid #333; text-align: left; }
+
+        .progress-bar { width: 100%; height: 6px; background: #222; margin-bottom: 30px; border: 1px solid #444; }
         #progress { width: 0%; height: 100%; background: var(--neon-cyan); transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div class="neon-bg"></div>
+<div class="scanlines"></div>
 
 <div id="container">
     <div id="quiz-area">
-        <h1>2026 Simulator</h1>
+        <h1>NEON PROTOCOL</h1>
+        <div class="subtitle">=== 觉醒矩阵 ===</div>
         <div class="progress-bar"><div id="progress"></div></div>
-        <p id="question" class="question-text">正在初始化意识连接...</p>
+        <p id="question" class="question-text">系统自检完成...<br>请插入数据链路以生成你的数字义体档案。</p>
         <div id="options">
-            <button class="option-btn" onclick="startQuiz()">开始同步</button>
+            <button class="option-btn" onclick="startQuiz()">[ 按此键执行同步 ]</button>
         </div>
     </div>
 
     <div id="result-area">
-        <h1>觉醒档案</h1>
+        <h1>ACCESS GRANTED</h1>
+        <div class="subtitle">义体解析完毕</div>
+        <div class="avatar-container">
+            <img id="avatar-img" src="" alt="Cyber Avatar">
+        </div>
         <div class="persona-title" id="persona-name"></div>
+        <div class="persona-tags" id="persona-tags"></div>
         <div class="persona-desc" id="persona-desc"></div>
-        <button class="option-btn" style="margin-top: 30px;" onclick="location.reload()">重新上传意识</button>
+        <button class="option-btn" style="margin-top: 30px;" onclick="location.reload()">[ 重启模拟器 ]</button>
     </div>
 </div>
 
 <script>
     const questions = [
-        { q: "早上 8:00，个人 AI 助理突然进入‘罢工模式’并播放古典乐。你的反应是？", a: "立刻发朋友圈吐槽并艾特官博 (E)", b: "享受清静，假装自己也没醒 (I)", dim: "EI" },
-        { q: "老板要求在虚拟空间开团建。你的头像 Bug 变成了一只土拨鼠，你会？", a: "认命，以土拨鼠身份准时端庄参会 (S)", b: "宣称这是对‘动物性’的探索，输出公司文化 (N)", dim: "SN" },
-        { q: "App 提示你明天会因为左脚先跨入公司而遭遇尴尬。你选择？", a: "卸载它。明天故意左脚进，用逻辑打败迷信 (T)", b: "宁可信其有。明天请假，或练习右脚起跳进门 (F)", dim: "TF" },
-        { q: "面对未知的数字秩序波动，你第一件事是？", a: "检查备份硬盘，确保一切在掌控中 (J)", b: "兴奋地刷起评论区，看离谱的阴谋论 (P)", dim: "JP" }
+        { q: "早上 8:00，个人 AI 助理突然进入‘罢工模式’并播放古典乐。你的反应是？", a: "立刻发动态吐槽并艾特修理厂商 (E)", b: "享受清静，假装自己也没醒 (I)", dim: "EI" },
+        { q: "面对未知的数字秩序波动，你第一件事是？", a: "认命，先检查备份硬盘确保数据安全 (S)", b: "兴奋地刷起论坛，推演背后的各种阴谋论 (N)", dim: "SN" },
+        { q: "系统预测你今天参加某个会议会引发尴尬。你选择？", a: "无视预测，用无懈可击的逻辑打倒开会的人 (T)", b: "为了照顾大家的感受，找个完美的借口请假 (F)", dim: "TF" },
+        { q: "明天财阀即将切断街区的能源供应，你今晚会？", a: "制定详细的逃生或备用电源抢夺计划 (J)", b: "先去酒吧喝一杯，走一步看一步 (P)", dim: "JP" }
     ];
 
-    // 定义 8 种核心人设及其匹配规则
-    const personaMap = [
-        { name: "系统架构师", desc: "逻辑是你的骨架。在数字荒原中，你才是那个最终的观测者。你拒绝感性干扰，只相信底层代码的稳定性。", traits: ["I", "N", "T", "J"] },
-        { name: "星际治愈者", desc: "你是不稳定代码中的彩色涟漪。在冰冷的 2026 年，你用情感连接每一个破碎的灵魂。", traits: ["E", "N", "F", "P"] },
-        { name: "赛博游侠", desc: "规则只是建议。你是那个能在断电前一秒修好系统的清道夫，行动力是你唯一的信条。", traits: ["I", "S", "T", "P"] },
-        { name: "能量守卫者", desc: "无论算法如何迭代，你始终守护着人性中最后的温度。你是这个混乱时代的定海神针。", traits: ["E", "S", "F", "J"] },
-        { name: "逻辑纵火犯", desc: "你不是在寻找真相，你是在重塑逻辑。你喜欢在思维的边缘试探，让平庸的代码燃烧。", traits: ["E", "N", "T", "P"] },
-        { name: "月光折射镜", desc: "温柔是你的武器。你能洞察别人看不见的黑暗，并将其转化为微弱但坚定的光亮。", traits: ["I", "N", "F", "J"] },
-        { name: "铁律执行官", desc: "如果文明需要备份，你就是那个最可靠的硬盘。你眼中的世界必须严丝合缝，井然有序。", traits: ["E", "S", "T", "J"] },
-        { name: "流动的笔触", desc: "生活是正在发生的即兴艺术。你不被任何标签定义，你只负责极致地活在感官的当下。", traits: ["I", "S", "F", "P"] }
-    ];
+    // 16 种完整人格档案
+    const personas = {
+        "INTJ": { name: "核心架构师", tags: "特质：绝对理智 / 运筹帷幄", desc: "你的大脑是一台精密的量子计算机。在混乱的赛博时代，你鄙视无意义的情感波动，致力于建立完美的系统与秩序。你是幕后的执棋者。" },
+        "INTP": { name: "逻辑黑客", tags: "特质：思维跳跃 / 解构一切", desc: "规则在你眼里就是用来打破的。你沉迷于挖掘底层代码的漏洞，对现实世界的巨头不屑一顾。你的存在本身就是一个无法修复的 Bug。" },
+        "ENTJ": { name: "财阀执行官", tags: "特质：野心勃勃 / 铁腕控制", desc: "在这个被超级公司掌控的世界，你是天生的掠食者。你拥有强大的战略眼光和执行力，无论是金钱还是数据，都必须臣服于你的意志。" },
+        "ENTP": { name: "混沌掮客", tags: "特质：极度聪明 / 唯恐天下不乱", desc: "你游走在合法与非法的灰色地带，贩卖情报与灵感。你不仅能看透系统的漏洞，还能把这些漏洞包装成商品卖个好价钱。" },
+        "INFJ": { name: "霓虹先知", tags: "特质：深邃洞察 / 精神领袖", desc: "在义体横行的时代，你是少数拥有‘纯粹灵魂’的人。你能预见科技反噬的结局，默默在暗网深处指引着迷茫的觉醒者。" },
+        "INFP": { name: "虚拟梦境师", tags: "特质：理想主义 / 数字浪漫", desc: "现实太脏，你选择将灵魂上传至乌托邦般的虚拟网络。你用代码编织诗意，是这个冰冷世界里最后的艺术家和治愈者。" },
+        "ENFJ": { name: "街区领袖", tags: "特质：极具号召力 / 共情大师", desc: "你是底层黑客和流浪者的精神支柱。你擅长连接不同的人类和 AI，用强大的感染力带领他们对抗财阀的压迫。" },
+        "ENFP": { name: "全息漫游者", tags: "特质：自由不羁 / 追求可能", desc: "你拒绝被任何势力绑定，穿梭于不同的虚拟服务器之间。哪里有新鲜的数据和刺激的冒险，哪里就有你的全息投影。" },
+        "ISTJ": { name: "铁律守卫", tags: "特质：一丝不苟 / 极度可靠", desc: "你是维持这座城市运转的基石。无论是巡逻街道还是维护防火墙，你都严格遵守说明书上的每一行条款，痛恨意外。" },
+        "ISFJ": { name: "记忆归档员", tags: "特质：温和坚定 / 守护历史", desc: "当所有人都在追求机械进化时，你选择留在地下室，将人类脆弱的真实记忆刻入水晶存储器，守护着过去的温度。" },
+        "ESTJ": { name: "治安维和者", tags: "特质：强硬务实 / 效率至上", desc: "你是秩序的具象化。面对混乱的街区，你倾向于用绝对的手段进行镇压。在你的字典里，没有‘灰度’，只有‘合法’与‘清剿’。" },
+        "ESFJ": { name: "数据枢纽", tags: "特质：热情周到 / 社群核心", desc: "你是地下情报站的主理人。你认识街上的每一个赛博朋克，总能在别人需要的时候提供补给或是一个避风的港湾。" },
+        "ISTP": { name: "机械义体医", tags: "特质：冷静独立 / 手艺精湛", desc: "比起复杂的人心，你更喜欢冰冷的机械。在你的黑诊所里，只要钱到位，就没有你修不好的手臂或破解不了的芯片。" },
+        "ISFP": { name: "电子涂鸦客", tags: "特质：敏锐随性 / 反叛美学", desc: "你用高能激光在巨头公司的外墙上留下绚丽的涂鸦。你不关心宏大的叙事，只在乎此时此刻的感官冲击和自我表达。" },
+        "ESTP": { name: "极速快递员", tags: "特质：追求刺激 / 活在当下", desc: "骑着改装过的磁悬浮摩托，穿梭在城市的霓虹深渊。只要佣金够高，无论多危险的货物，你都能在警察封锁前送达。" },
+        "ESFP": { name: "迷幻主唱", tags: "特质：光芒万丈 / 享乐主义", desc: "你是全息舞台上最耀眼的明星。你懂得如何用视觉和声浪操控大众的情绪，只要你一开口，整个城市的网络都会为你疯狂。" }
+    };
 
     let currentQ = 0;
     let userTraits = [];
@@ -122,10 +150,10 @@
         if(currentQ < questions.length) {
             let item = questions[currentQ];
             document.getElementById("progress").style.width = ((currentQ / questions.length) * 100) + "%";
-            document.getElementById("question").innerText = item.q;
+            document.getElementById("question").innerHTML = item.q;
             document.getElementById("options").innerHTML = `
-                <button class="option-btn" onclick="record('${item.dim[0]}')">${item.a}</button>
-                <button class="option-btn" onclick="record('${item.dim[1]}')">${item.b}</button>
+                <button class="option-btn" onclick="record('${item.dim[0]}')">> ${item.a}</button>
+                <button class="option-btn" onclick="record('${item.dim[1]}')">> ${item.b}</button>
             `;
         } else { showResult(); }
     }
@@ -137,23 +165,19 @@
     }
 
     function showResult() {
-        // 寻找完全匹配的人设
-        let match = personaMap.find(p => 
-            p.traits.every(t => userTraits.includes(t))
-        );
-
-        // 如果没有完全匹配，说明是特殊的排列组合
-        if (!match) {
-            match = {
-                name: "幽灵代码 (The Ghost Code)",
-                desc: "警告：检测到无法归类的意识波动。你不符合任何已知的人格协议。你是一段游离于系统之外的‘幽灵代码’，既是Bug，也是进化的起点。"
-            };
-        }
+        // 将用户的 4 次选择拼成字母组合 (例如 "INTJ")
+        let finalType = userTraits.join('');
+        let match = personas[finalType];
 
         document.getElementById("quiz-area").style.display = "none";
         document.getElementById("result-area").style.display = "block";
-        document.getElementById("persona-name").innerText = match.name;
-        document.getElementById("persona-desc").innerText = match.desc;
+        
+        // 核心亮点：使用 DiceBear API 根据人格字母实时生成像素头像
+        document.getElementById("avatar-img").src = `https://api.dicebear.com/8.x/pixel-art/svg?seed=${finalType}&size=150`;
+        
+        document.getElementById("persona-name").innerText = match.name + " (" + finalType + ")";
+        document.getElementById("persona-tags").innerText = match.tags;
+        document.getElementById("persona-desc").innerHTML = match.desc;
     }
 </script>
 </body>
